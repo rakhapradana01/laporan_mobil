@@ -87,7 +87,7 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                     <div class="card">
                         <div class="card-body">
                             <?php
-                             echo '<td>
+                            echo '<td>
                                     <div class="table-container">
                                         <a href="addPinjam.php"><button class="btn btn-success">Tambah Pinjam</button></a>
                                         </div>
@@ -100,15 +100,21 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                 cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>AKSI</th>
+                                        <?php
+                                        if ($_SESSION['fk_role'] == 'admin') {
+                                            echo '<th width="80px;">AKSI</th>';
+                                        } else {
+                                            echo '<td>AKSI</td>';
+                                        }
+                                        ?>
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>Nik</th>
                                         <th>Devisi</th>
                                         <th>Jabatan</th>
                                         <th>Tujuan</th>
-                                        <th>Pilih_Reser</th>
-                                        <th>Plat_Nomer</th>
+                                        <th>Pilih Reser</th>
+                                        <th>Plat Nomer</th>
                                         <th>Merek</th>
                                         <th>Tipe</th>
                                         <th>Warna</th>
@@ -149,25 +155,37 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                         ?>
                                         <tr>
                                             <td>
-                                                <a
-                                                    href="<?= BASE_URL ?>/view/pinjam/updatePinjam.php?id_reserv=<?php echo $d["id_reserv"] ?>"><button
-                                                        class="btn btn-success"><i
-                                                            class="fas fa-fw fa-pen"></i></button></a>
-                                                <hr>
-                                                <a target="_blank"
-                                                    href="<?= BASE_URL ?>/print/buktiPinjam.php?id_reserv=<?= $d["id_reserv"] ?>"><button
-                                                        class="btn btn-dark"><i
-                                                            class="fas fa-fw fa-download"></i></button></a>
-                                                <hr>
                                                 <?php
                                                 if ($_SESSION['fk_role'] == 'admin') {
-                                                    echo '
-                                        <a href="' . BASE_URL . '/process/delete/process_hapusPinjam.php?id_reserv=' . $d["id_reserv"] . '" data-id="' . $d["id_reserv"] . '" data-toggle="modal" data-target="#exampleModal" class="btn btn-danger"><i class="fas fa-fw fa-trash"></i></a></td>';
+                                                    echo '<a target="_blank" href="' . BASE_URL . '/print/buktiPinjam.php?id_reserv=' . $d["id_reserv"] . '">
+                <button class="btn btn-dark btn-sm">
+                    <i class="fas fa-fw fa-download"></i>
+                </button>
+              </a>
+              <a href="' . BASE_URL . '/view/pinjam/updatePinjam.php?id_reserv=' . $d["id_reserv"] . '">
+                <button class="btn btn-success btn-sm">
+                    <i class="fas fa-fw fa-pen"></i>
+                </button>
+              </a>
+              <a href="' . BASE_URL . '/process/delete/process_hapusPinjam.php?id_reserv=' . $d["id_reserv"] . '" 
+                data-id="' . $d["id_reserv"] . '" 
+                data-toggle="modal" 
+                data-target="#exampleModal" 
+                class="btn btn-danger btn-sm">
+                <i class="fas fa-fw fa-trash"></i>
+              </a>';
                                                 } else {
-                                                    echo '';
+                                                    // Untuk pengguna non-admin hanya menampilkan tombol print
+                                                    echo '<a target="_blank" href="' . BASE_URL . '/print/buktiPinjam.php?id_reserv=' . $d["id_reserv"] . '">
+                <button class="btn btn-dark btn-sm">
+                    <i class="fas fa-fw fa-download"></i> Print
+                </button>
+              </a>';
                                                 }
                                                 ?>
                                             </td>
+
+
                                             <td><?= $no++; ?></td>
                                             <td><?= $d['Nama_Peminjam']; ?></td>
                                             <td><?= $d['Nik']; ?></td>
@@ -179,7 +197,28 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                             <td><?= $d['Merek']; ?></td>
                                             <td><?= $d['Tipe_Mobil']; ?></td>
                                             <td><?= $d['warna']; ?></td>
-                                            <td><?= isset($d['WaktuOut']) ? date('d-m-Y H:i:s', strtotime($d['WaktuOut'])) : "-"; ?></td>
+                                            <td style="white-space: normal;">
+                                                <?php
+                                                if ($d['WaktuOut']) {
+                                                    // Mengambil WaktuOut
+                                                    $waktu_out = $d['WaktuOut'];
+
+                                                    // Mengonversi WaktuOut menjadi format Hari-Bulan-Tahun
+                                                    $formatted_date = date("d-m-Y", strtotime($waktu_out));
+
+                                                    // Jika ada waktu (jam), tampilkan juga
+                                                    $date_time = explode(" ", $waktu_out);
+                                                    $date = $date_time[0]; // Tanggal
+                                                    $time = isset($date_time[1]) ? $date_time[1] : '';
+
+                                                    // Tampilkan Tanggal dalam format Hari-Bulan-Tahun
+                                                    echo "<span style='display:block;'>$formatted_date</span><span>$time</span>";
+                                                } else {
+                                                    echo "-"; // Jika tidak ada data WaktuOut
+                                                }
+                                                ?>
+                                            </td>
+                                            </td>
                                             <td><?= $d['KmOut']; ?></td>
                                             <td><img style="width: 100px;"
                                                     src="<?= BASE_URL ?>/img/reserv/<?= $d['fotoout']; ?>" alt=""></td>
@@ -260,5 +299,9 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
         max-height: 700px;
         /* Adjust the maximum height as needed */
         overflow-y: auto;
+    }
+
+    table {
+        white-space: nowrap;
     }
 </style>

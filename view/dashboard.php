@@ -51,7 +51,7 @@ $page = 'dashboard';
     $jumlahstatus = mysqli_fetch_array($status)[0];
 
     if (!empty($_SESSION['Nik'])) {
-       echo "
+        echo "
          <script type='text/javascript'>
                 swal({
                     title: 'Informasi',
@@ -70,7 +70,7 @@ $page = 'dashboard';
         <div class="d-sm-flex align-items-center justify-content-between mb-4 mt-4">
             <h2>Dashboard</h2>
         </div>
-      
+
         <!-- Content Row -->
         <div class="row">
             <!-- Earnings (Monthly) Card Example -->
@@ -120,7 +120,8 @@ $page = 'dashboard';
                                 </div>
                                 <div class="row no-gutters align-items-center">
                                     <div class="col-auto">
-                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?= $jumlahpegawai; ?></div>
+                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?= $jumlahpegawai; ?>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -153,27 +154,28 @@ $page = 'dashboard';
         </div>
 
         <div class="row">
-        <main>
-            <div class="table-data">
-				<div class="order">
-					<div class="head">
-						<h3>History Data Reservasi</h3>
-					</div>
-					<table>
-						<thead>
-							<tr>
-                                <th>Nomor</th>
-                                <th>Nama</th>
-                                <th>NIK</th>
-                                <th>Tujuan</th>
-                                <th>Tipe Mobil</th>
-                                <th>Waktu In</th>
-                                <th>Foto</th>
-                                <th>Status</th>
-							</tr>
-						</thead>
-						<tbody>
-                            <?php
+            <main>
+                <div class="table-data">
+                    <div class="order">
+                        <div class="head">
+                            <h3>History Data Reservasi</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nomor</th>
+                                    <th>Nama</th>
+                                    <th>NIK</th>
+                                    <th>Plat Nomor</th>
+                                    <th>Tujuan</th>
+                                    <th>Tipe Mobil</th>
+                                    <th>Waktu In</th>
+                                    <th>Foto</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
                                 $no = 1;
                                 $data = mysqli_query($koneksi, "
                                 select 
@@ -200,27 +202,48 @@ $page = 'dashboard';
                                     join mobil on reserv.Plat_nomer=mobil.Plat_nomer;");
                                 while ($d = mysqli_fetch_array($data)) {
 
-                                ?>
+                                    ?>
                                     <tr>
-                                        
+
                                         <td><?= $no++; ?></td>
                                         <td><?= $d['Nama_Peminjam']; ?></td>
                                         <td><?= $d['Nik']; ?></td>
+                                        <td><?= $d['Plat_nomer']; ?></td>
                                         <td><?= $d['Tujuan']; ?></td>
                                         <td><?= $d['Tipe_Mobil']; ?></td>
-                                        <td><?= $d['WaktuIn'] ?? "-"; ?></td>
+                                        <td style="white-space: normal;">
+                                            <?php
+                                            if ($d['WaktuIn']) {
+                                                // Mengambil WaktuOut
+                                                $waktu_in = $d['WaktuIn'];
+
+                                                // Mengonversi WaktuOut menjadi format Hari-Bulan-Tahun
+                                                $formatted_date = date("d-m-Y", strtotime($waktu_in));
+
+                                                // Jika ada waktu (jam), tampilkan juga
+                                                $date_time = explode(" ", $waktu_in);
+                                                $date = $date_time[0]; // Tanggal
+                                                $time = isset($date_time[1]) ? $date_time[1] : '';
+
+                                                // Tampilkan Tanggal dalam format Hari-Bulan-Tahun
+                                                echo "<span style='display:block;'>$formatted_date</span><span>$time</span>";
+                                            } else {
+                                                echo "-"; // Jika tidak ada data WaktuOut
+                                            }
+                                            ?>
+                                        </td>
                                         <td><img src="<?= BASE_URL ?>/img/reserv/<?= $d['fotoin']; ?>" alt=""></td>
                                         <td><?= $d['status']; ?></td>
                                     </tr>
                                 <?php } ?>
-							<tr>
-								
-						</tbody>
-					</table>
-				</div>
-				
-			</div>
-        </main>
+                                <tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </main>
         </div>
 
 
@@ -231,7 +254,7 @@ $page = 'dashboard';
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="../js/sb-admin-2.min.js"></script>
     <script src="../js/script.js"></script>
-    
+
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 

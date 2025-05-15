@@ -27,41 +27,51 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
         <div class="container-fluid">
             <div class="card">
                 <div class="card-body">
-            <h1 class="h3 mb-4 text-gray-800">Data Service</h1>
-            <div class="card">
-                <div class="card-body">
-                    <a href="<?= BASE_URL ?>/view/service/service.php"><button class="btn btn-danger">Kembali</button></a>
-                    <hr>
-                    <form action="<?= BASE_URL ?>/process/add/process_tambahservice.php" method="post">
-                        <div class="mb-3">
-                            <label for="" class="form-label">Plat Nomer</label>
-                            <select name="plat_nomer" id="plat nomer" class="form-control" require>
-                                <option value="">--Pilih--</option>
-                                <?phP
-                                $sql_mobil = mysqli_query($koneksi, "SELECT * FROM mobil") or die(mysqli_error($koneksi));
-                                while ($data_mobil = mysqli_fetch_array($sql_mobil)) {
-                                    echo '<option value="' . $data_mobil['plat_nomer'] . '">' . $data_mobil['plat_nomer'] . '</option>
+                    <h1 class="h3 mb-4 text-gray-800">Data Service</h1>
+                    <div class="card">
+                        <div class="card-body">
+                            <a href="<?= BASE_URL ?>/view/service/service.php"><button
+                                    class="btn btn-danger">Kembali</button></a>
+                            <hr>
+                            <form action="<?= BASE_URL ?>/process/add/process_tambahservice.php" method="post">
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Plat Nomer</label>
+                                    <select name="plat_nomer" id="plat nomer" class="form-control" require>
+                                        <option value="">--Pilih--</option>
+                                        <?phP
+                                        $sql_mobil = mysqli_query($koneksi, "SELECT * FROM mobil") or die(mysqli_error($koneksi));
+                                        while ($data_mobil = mysqli_fetch_array($sql_mobil)) {
+                                            echo '<option value="' . $data_mobil['plat_nomer'] . '">' . $data_mobil['plat_nomer'] . '</option>
                                      ';
-                                }
-                                ?>
-                            </select>
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tanggal_service" class="form-label">Tanggal Service</label>
+                                    <input type="date" class="form-control" name="tanggal_service" id="tanggal_service"
+                                        required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Jenis Service</label>
+                                    <select name="jenis_service" class="form-control" required>
+                                        <option value="">--pilih--</option>
+                                        <option value="Mesin">Mesin</option>
+                                        <option value="Keseluruhan">Keseluruhan</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">KM sekarang</label>
+                                    <input type="number" class="form-control" name="km_sekarang" required>
+                                </div>
+                                <input type="submit" value="Simpan" class="btn btn-success">
                         </div>
-                        <div class="mb-3">
-                            <label for="" class="form-label">Jenis Service</label>
-                            <select name="jenis_service" class="form-control" required>
-                                <option value="">--pilih--</option>
-                                <option value="Mesin">Mesin</option>
-                                <option value="Keseluruhan">Keseluruhan</option>
-                            </select>
-                        </div>
-                        <input type="submit" value="Simpan" class="btn btn-success">
+                    </div>
+                    </form>
                 </div>
+                <?php include "../../template/footer.php"; ?>
             </div>
-            </form>
         </div>
-        <?php include "../../template/footer.php"; ?>
-    </div>
-    </div>
 
 
 

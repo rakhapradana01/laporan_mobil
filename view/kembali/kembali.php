@@ -7,10 +7,15 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
-    <style>
-        body {margin:2em;}
-        td:last-child {text-align:center;}
-    </style>
+<style>
+    body {
+        margin: 2em;
+    }
+
+    td:last-child {
+        text-align: center;
+    }
+</style>
 
 <head>
 
@@ -29,7 +34,7 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
     <?php
 
     if (isset($_SESSION['tambah']) == 'berhasil tambah') {
-       echo "
+        echo "
          <script type='text/javascript'>
                 swal({
                     title: 'Informasi',
@@ -38,10 +43,10 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                     button: 'OK',
                 });
          </script>";
-    } 
+    }
 
     if (isset($_SESSION['edit']) == 'berhasil edit') {
-       echo "
+        echo "
          <script type='text/javascript'>
                 swal({
                     title: 'Informasi',
@@ -53,7 +58,7 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
     }
 
     if (isset($_SESSION['hapus']) == 'hapus') {
-       echo "
+        echo "
          <script type='text/javascript'>
                 swal({
                     title: 'Informasi',
@@ -78,36 +83,43 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
         <div class="container-fluid">
             <div class="card">
                 <div class="card-body">
-            <h1 class="h3 mb-4 text-gray-800">Data Kembali</h1>
-            <div class="card">
-                <div class="card-body">
-                    
-                    <table id="myTable"  class="table table-responsive table-striped table-bordered" cellspacing="0" width="100%">
-                        <thead>
-                                <tr>
-                                    <th>AKSI</th>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>Nik</th>
-                                    <th>Devisi</th>
-                                    <th>Jabatan</th>
-                                    <th>Tujuan</th>
-                                    <th>Pilih_Reser</th>
-                                    <th>Plat_Nomer</th>
-                                    <th>Merek</th>
-                                    <th>Tipe</th>
-                                    <th>Warna</th>
-                                    <th>Waktu IN</th>
-                                    <th>Km IN</th>
-                                    <th>Foto Masuk</th>
-                                    <th>Status</th>
+                    <h1 class="h3 mb-4 text-gray-800">Data Kembali</h1>
+                    <div class="card">
+                        <div class="card-body">
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $no = 1;
-                                $data = mysqli_query($koneksi, "
+                            <table id="myTable" class="table table-responsive table-striped table-bordered"
+                                cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                    <?php
+                                        if ($_SESSION['fk_role'] == 'admin') {
+                                            echo '<th width="80px;">AKSI</th>';
+                                        } else {
+                                            echo '';
+                                        }
+                                        ?>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>Nik</th>
+                                        <th>Devisi</th>
+                                        <th>Jabatan</th>
+                                        <th>Tujuan</th>
+                                        <th>Pilih_Reser</th>
+                                        <th>Plat_Nomer</th>
+                                        <th>Merek</th>
+                                        <th>Tipe</th>
+                                        <th>Warna</th>
+                                        <th>Waktu IN</th>
+                                        <th>Km IN</th>
+                                        <th>Foto Masuk</th>
+                                        <th>Status</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $no = 1;
+                                    $data = mysqli_query($koneksi, "
                                 select 
                                     id_reserv,
                                     pegawai.Nama as Nama_Peminjam,
@@ -130,104 +142,129 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                     from reserv 
                                     join pegawai on id_nik=reserv.Nik 
                                     join mobil on reserv.Plat_nomer=mobil.Plat_nomer order by id_reserv desc;");
-                                while ($d = mysqli_fetch_array($data)) {
+                                    while ($d = mysqli_fetch_array($data)) {
 
-                                ?>
-                                    <tr>
-                                        <td>
-                                            <a href="<?= BASE_URL ?>/view/kembali/updateKembali.php?id_reserv=<?php echo $d["id_reserv"] ?>"><button class="btn btn-success"><i class="fas fa-fw fa-backward"></i></button></a>
-                                            <hr>
-                                            <a target="_blank" href="<?= BASE_URL ?>/print/buktiKembali.php?id_reserv=<?= $d["id_reserv"] ?>"><button class="btn btn-dark"><i class="fas fa-fw fa-download"></i></button></a>
-                                            <hr>
-                                            <?php
-                                            if ($_SESSION['fk_role'] == 'admin') {
-                                                echo '
-                                        <a href="' . BASE_URL . '/process/delete/process_hapusReserv.php?id_reserv=' . $d["id_reserv"] . '" data-id="' . $d["id_reserv"] . '" data-toggle="modal" data-target="#exampleModal" class="btn btn-danger"><i class="fas fa-fw fa-trash"></i></a></td>';
-                                            } else {
-                                                echo '';
-                                            }
-                                            ?>
-                                        </td>
-                                        <td><?= $no++; ?></td>
-                                        <td><?= $d['Nama_Peminjam']; ?></td>
-                                        <td><?= $d['Nik']; ?></td>
-                                        <td><?= $d['devisi']; ?></td>
-                                        <td><?= $d['Jabatan']; ?></td>
-                                        <td><?= $d['Tujuan']; ?></td>
-                                        <td><?= $d['Pilih_Reserv']; ?></td>
-                                        <td><?= $d['Plat_nomer']; ?></td>
-                                        <td><?= $d['Merek']; ?></td>
-                                        <td><?= $d['Tipe_Mobil']; ?></td>
-                                        <td><?= $d['warna']; ?></td>
-                                        <td><?= $d['WaktuIn'] ?? "-"; ?></td>
-                                        <td><?= $d['KmIn']; ?></td>
-                                        <td><img style="width: 100px;" src="<?= BASE_URL ?>/img/reserv/<?= $d['fotoin']; ?>" alt=""></td>
-                                        <td><?= $d['status']; ?></td>
-                                    </tr>
-                                <?php
-                                };
-                                ?>
-                            </tbody>
+                                        ?>
+                                        <tr>
+                        
+                                                <?php
+                                                if ($_SESSION['fk_role'] == 'admin') {
+                                                    // Correct the echo statements and remove the short tags
+                                                    echo '<td><a href="' . BASE_URL . '/view/kembali/updateKembali.php?id_reserv=' . $d["id_reserv"] . '">
+                <button class="btn btn-success btn-sm"><i class="fas fa-fw fa-backward"></i></button>
+              </a>';
+                                                    echo '<a target="_blank" href="' . BASE_URL . '/print/buktiKembali.php?id_reserv=' . $d["id_reserv"] . '">
+                <button class="btn btn-dark btn-sm"><i class="fas fa-fw fa-download"></i></button>
+              </a>';
+                                                    echo '<a href="' . BASE_URL . '/process/delete/process_hapusReserv.php?id_reserv=' . $d["id_reserv"] . '" 
+                data-id="' . $d["id_reserv"] . '" 
+                data-toggle="modal" 
+                data-target="#exampleModal" 
+                class="btn btn-danger btn-sm">
+                <i class="fas fa-fw fa-trash"></i>
+              </a></td>';
+                                                } else {
+                                                    echo ''; // For non-admin users, no buttons
+                                                }
+                                                ?>
 
-                    </table>
+                                            <td><?= $no++; ?></td>
+                                            <td><?= $d['Nama_Peminjam']; ?></td>
+                                            <td><?= $d['Nik']; ?></td>
+                                            <td><?= $d['devisi']; ?></td>
+                                            <td><?= $d['Jabatan']; ?></td>
+                                            <td><?= $d['Tujuan']; ?></td>
+                                            <td><?= $d['Pilih_Reserv']; ?></td>
+                                            <td><?= $d['Plat_nomer']; ?></td>
+                                            <td><?= $d['Merek']; ?></td>
+                                            <td><?= $d['Tipe_Mobil']; ?></td>
+                                            <td><?= $d['warna']; ?></td>
+                                            <td style="white-space: normal;">
+                                                <?php
+                                                if ($d['WaktuIn']) {
+                                                    $waktu_in = $d['WaktuIn'];
+                                                    $date_time = explode(" ", $waktu_in);
+                                                    $date = $date_time[0]; // Tanggal
+                                                    $time = isset($date_time[1]) ? $date_time[1] : '';
+                                                    echo "<span style='display:block;'>$date</span><span>$time</span>";
+                                                } else {
+                                                    echo "-"; // Jika tidak ada data WaktuIn
+                                                }
+                                                ?>
+                                            </td>
 
-                    <!-- modals -->
-                    <div class="modal fade" id="exampleModal" role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Apakah anda ingin menghapus data ini ?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-danger" id="hapus">hapus</button>
+                                            <td><?= $d['KmIn']; ?></td>
+                                            <td><img style="width: 100px;"
+                                                    src="<?= BASE_URL ?>/img/reserv/<?= $d['fotoin']; ?>" alt=""></td>
+                                            <td><?= $d['status']; ?></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ;
+                                    ?>
+                                </tbody>
+
+                            </table>
+
+                            <!-- modals -->
+                            <div class="modal fade" id="exampleModal" role="dialog" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Hapus Data</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Apakah anda ingin menghapus data ini ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-danger" id="hapus">hapus</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <script>
-        $(document).ready(function() {
-            // Tangani tombol "Hapus" yang diklik di dalam modal
-            $('#exampleModal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget); // Tombol yang memicu modal
-                var idreserv = button.data('id'); // Ambil ID pegawai dari atribut data-id
-                var modal = $(this);
-                modal.find('.modal-body').html('Apakah Anda yakin ingin menghapus data ini ?');
-                // Atur tindakan penghapusan ke URL yang benar
-                modal.find('#hapus').attr('data-id', idreserv);
-            });
+            <script>
+                $(document).ready(function () {
+                    // Tangani tombol "Hapus" yang diklik di dalam modal
+                    $('#exampleModal').on('show.bs.modal', function (event) {
+                        var button = $(event.relatedTarget); // Tombol yang memicu modal
+                        var idreserv = button.data('id'); // Ambil ID pegawai dari atribut data-id
+                        var modal = $(this);
+                        modal.find('.modal-body').html('Apakah Anda yakin ingin menghapus data ini ?');
+                        // Atur tindakan penghapusan ke URL yang benar
+                        modal.find('#hapus').attr('data-id', idreserv);
+                    });
 
-            $('#hapus').click(function() {
-                
-                var idreserv = $(this).data('id');
-                // Lakukan tindakan penghapusan sesuai dengan URL yang benar
-                window.location.href = '<?= BASE_URL ?>/process/delete/process_hapusReserv.php?id_reserv=' + idreserv;
-                
-            });
-            
-        });
-    </script>
+                    $('#hapus').click(function () {
+
+                        var idreserv = $(this).data('id');
+                        // Lakukan tindakan penghapusan sesuai dengan URL yang benar
+                        window.location.href = '<?= BASE_URL ?>/process/delete/process_hapusReserv.php?id_reserv=' + idreserv;
+
+                    });
+
+                });
+            </script>
 
 
-    <?php include '../../template/footer.php'; ?>
+            <?php include '../../template/footer.php'; ?>
 
-    <script>
-        $(document).ready(function() {
-            $('#myTable').DataTable();
-        });
-    </script>
+            <script>
+                $(document).ready(function () {
+                    $('#myTable').DataTable();
+                });
+            </script>
 
-    
+
 </body>
 
 </html>
@@ -236,5 +273,9 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
         max-height: 700px;
         /* Adjust the maximum height as needed */
         overflow-y: auto;
+    }
+
+    table {
+        white-space: nowrap;
     }
 </style>

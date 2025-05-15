@@ -12,9 +12,9 @@ class PDF extends FPDF
         // Jarak antara logo dan teks
         $this->Ln(3); // Sesuaikan jarak yang diinginkan
         // Kop surat
-        $this->SetFont('Arial', 'B', 15);
+        $this->SetFont('Arial', 'B', 14);
         $this->Cell(0, 7, 'PT. ANGKASA PURA SUPPORT', 0, 1, 'C');
-        $this->Cell(0, 7, 'CABANG  BANJARMASIN', 0, 1, 'C');
+        $this->Cell(0, 7, 'CABANG BANJARMASIN', 0, 1, 'C');
 
 
         // Ganti font ke normal
@@ -35,7 +35,7 @@ class PDF extends FPDF
 
 
         // Logo
-        $this->Image('logo2.jpg', 8, 13, 40);
+        $this->Image('logo2.jpg', 10, 8, 25);
         $this->Ln(4); // Spasi
 
 
@@ -94,44 +94,37 @@ $pdf->Cell(35, 10, 'Plat nomer', 1);
 $pdf->Cell(40, 10, 'Merek', 1);
 $pdf->Cell(25, 10, 'Tipe Mobil', 1);
 $pdf->Cell(30, 10, 'Warna', 1);
-$pdf->Cell(45, 10, 'Konsumsi BBM Perminggu', 1);
+$pdf->Cell(45, 10, 'Konsumsi BBM', 1);
 
 $pdf->Ln();
 
 // Fetch data and add rows to the PDF
 // include 'config.php';
 // print_r($_POST);
-if ($_POST['sedia'] == "semua") {
-    if ($_POST['tipe'] == "semua" && $_POST['merek'] == "semua") {
-        $sql = "select * from mobil";
-    } else if ($_POST['tipe'] != "semua" && $_POST['merek'] == "semua") {
-        $sql = "select * from mobil where tipe_mobil='$_POST[tipe]'";
-    } else if ($_POST['tipe'] != "semua" && $_POST['merek'] != "semua") {
-        $sql = "select * from mobil where tipe_mobil='$_POST[tipe]' and merek='$_POST[merek]'";
-    } else if ($_POST['tipe'] == "semua" && $_POST['merek'] != "semua") {
-        $sql = "select * from mobil where merek='$_POST[merek]'";
-    }
-} else if ($_POST['sedia'] == "ada") {
-    if ($_POST['tipe'] == "semua" && $_POST['merek'] == "semua") {
-        $sql = "select * from mobil where jumlah=1";
-    } else if ($_POST['tipe'] != "semua" && $_POST['merek'] == "semua") {
-        $sql = "select * from mobil where jumlah=1 and tipe_mobil='$_POST[tipe]'";
-    } else if ($_POST['tipe'] != "semua" && $_POST['merek'] != "semua") {
-        $sql = "select * from mobil where jumlah=1 and tipe_mobil='$_POST[tipe]' and merek='$_POST[merek]'";
-    } else if ($_POST['tipe'] == "semua" && $_POST['merek'] != "semua") {
-        $sql = "select * from mobil where jumlah=1 and merek='$_POST[merek]'";
-    }
-} else {
-    if ($_POST['tipe'] == "semua" && $_POST['merek'] == "semua") {
-        $sql = "select * from mobil where jumlah=0";
-    } else if ($_POST['tipe'] != "semua" && $_POST['merek'] == "semua") {
-        $sql = "select * from mobil where jumlah=0 and tipe_mobil='$_POST[tipe]'";
-    } else if ($_POST['tipe'] != "semua" && $_POST['merek'] != "semua") {
-        $sql = "select * from mobil where jumlah=0 and tipe_mobil='$_POST[tipe]' and merek='$_POST[merek]'";
-    } else if ($_POST['tipe'] == "semua" && $_POST['merek'] != "semua") {
-        $sql = "select * from mobil where jumlah=0 and merek='$_POST[merek]'";
-    }
+$filter = [];
+
+if ($_POST['tipe'] !== "semua") {
+    $filter[] = "tipe_mobil = '" . mysqli_real_escape_string($koneksi, $_POST['tipe']) . "'";
 }
+
+if ($_POST['merek'] !== "semua") {
+    $filter[] = "merek = '" . mysqli_real_escape_string($koneksi, $_POST['merek']) . "'";
+}
+
+if ($_POST['sedia'] === "ada") {
+    $filter[] = "jumlah = 1";
+} elseif ($_POST['sedia'] === "tidak") {
+    $filter[] = "jumlah = 0";
+}
+
+if ($_POST['plat_nomer'] !== "semua") {
+    $filter[] = "plat_nomer = '" . mysqli_real_escape_string($koneksi, $_POST['plat_nomer']) . "'";
+}
+
+$where = count($filter) > 0 ? "WHERE " . implode(" AND ", $filter) : "";
+
+$sql = "SELECT * FROM mobil $where";
+
 // $sql = "select * from mobil where jumlah=1 and merek='$_POST[merek]'";
 $result = $koneksi->query($sql);
 

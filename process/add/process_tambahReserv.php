@@ -23,7 +23,6 @@ $nama_file_fotoout = isset($_FILES['fotoout']['name']) ? $_FILES['fotoout']['nam
 
 $sumber_fotoin = isset($_FILES['fotoin']['tmp_name']) ? $_FILES['fotoin']['tmp_name'] : null;
 $nama_file_fotoin = isset($_FILES['fotoin']['name']) ? $_FILES['fotoin']['name'] : null;
-
 // Upload fotoout
 if ($sumber_fotoout && $nama_file_fotoout) {
     $target_fotoout = '../../img/reserv/';

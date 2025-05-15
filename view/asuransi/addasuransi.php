@@ -32,7 +32,7 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                 <div class="card-body">
                     <a href="asuransi.php"><button class="btn btn-danger">Kembali</button></a>
                     <hr>
-                    <form action="<?= BASE_URL ?>/process/add/process_tambahasuransi.php" method="post">
+                    <form action="<?= BASE_URL ?>/process/add/process_tambahasuransi.php" method="post" enctype="multipart/form-data"> 
                         <div class="mb-3">
                             <label for="" class="form-label">Plat Nomer</label>
                             <select name="plat_nomer" id="plat nomer" class="form-control" require>

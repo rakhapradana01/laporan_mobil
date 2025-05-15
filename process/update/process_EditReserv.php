@@ -4,6 +4,12 @@ require_once('../../function/helper.php');
 require_once('../../function/koneksi.php');
 
 $id_reserv = $_POST['id_reserv'];
+if (empty($_POST['WaktuIn'])) {
+    // Handle the error, e.g., show an error message or prevent further processing
+    echo "Waktu Masuk harus diisi.";
+    exit;  // Stop further execution
+}
+
 // proses update jika role admin
 if ($_SESSION['fk_role'] == 'admin') {
     $tj = $_POST['Tujuan'];

@@ -1,145 +1,114 @@
 <?php
 require_once('../function/helper.php');
 require_once('../function/koneksi.php');
-// include "config.php";
-require('../fpdf/fpdf.php'); // Include the FPDF library
+require('../fpdf/fpdf.php');
 
 class PDF extends FPDF
 {
-    // Header
     function Header()
     {
-        $this->Ln(3); // Sesuaikan jarak yang diinginkan
-        // Kop surat
-        $this->SetFont('Arial', 'B', 15);
-        $this->Cell(0, 7, 'PT. ANGKASA PURA SUPPORT', 0, 1, 'C');
-        $this->Cell(0, 7, 'CABANG  BANJARMASIN', 0, 1, 'C');
-
-
-        // Ganti font ke normal
-        $this->SetFont('Arial', '', 9);
-
-        // Tambahkan alamat PT
-        $this->Cell(0, 5, 'Kantor Cabang: Jl. Kasturi 1 No.73, Landasan Ulin Utara, Kec. Liang Anggang, Kota Banjar Baru, Kalimantan Selatan 70724', 0, 1, 'C');
-        $this->Ln(3); // Spasi
-
-
-        // Garis bawah ganda
-        $this->SetLineWidth(0.4); // Mengatur ketebalan garis menjadi 2
-        $this->Cell(0, 5, '', 'T'); // Baris pertama
-        $this->Ln(0); // Spasi antara garis bawah
-        $this->Cell(0, 0, '', 'T'); // Baris kedua
-        $this->SetLineWidth(0.2); // Mengembalikan ketebalan garis ke 0.2 setelah garis ganda
-
-
-
         // Logo
-        $this->Image('logo2.jpg', 8, 13, 40);
-        $this->Ln(4); // Spasi
+        $this->Image('logo2.jpg', 10, 8, 25);
 
+        // Header Title
+        $this->SetFont('Arial', 'B', 14);
+        $this->Cell(0, 7, 'PT. ANGKASA PURA SUPPORT', 0, 1, 'C');
+        $this->Cell(0, 7, 'CABANG BANJARMASIN', 0, 1, 'C');
 
+        // Alamat
+        $this->SetFont('Arial', '', 9);
+        $this->Cell(0, 5, 'Jl. Kasturi 1 No.73, Landasan Ulin Utara, Liang Anggang, Banjar Baru, Kalimantan Selatan 70724', 0, 1, 'C');
 
-        $this->SetFont('Arial', 'B', 12);
-        $this->Cell(0, 10, 'Surat Peminjaman Mobil Operasional Diluar Jam Operasional', 0, 1, 'C');
-        $this->Cell(0, 1, '', 0, 1, 'l');
+        // Garis ganda
+        $this->Ln(2);
+        $this->SetLineWidth(0.5);
+        $this->Line(10, $this->GetY(), 200, $this->GetY());
+        $this->SetLineWidth(0.1);
+        $this->Line(10, $this->GetY() + 1, 200, $this->GetY() + 1);
+        $this->Ln(5);
 
-        // Tanggal
-        // $this->SetFont('Arial', '', 10);
-        // $this->Cell(0, 1, '', 0, 1, 'l');
-        // $this->Cell(0, 7, 'Laporan Ini Berisikan Data Pegawai Yang Meminjam Mobil Operasional Di Luar Jam Operasional Perusahaan', 0, 1, 'C');
-        // $this->Ln(4); // Spasi
+        // Judul Surat
+        $this->SetFont('Arial', 'B', 11);
+        $this->Cell(0, 8, 'SURAT PEMINJAMAN MOBIL OPERASIONAL DI LUAR JAM OPERASIONAL', 0, 1, 'C');
+        $this->Ln(5);
     }
 
-    // Footer
     function Footer()
     {
-        // // Ttd
-        // $this->SetY(-70);
-        // $this->SetFont('Arial', 'B', 10);
-        // $this->Cell(500, 4, 'Banjarmasin, ' . date('d F Y'), 0, 1, 'C');
-        // $this->Cell(500, 4, 'PT. ANGKASA PURA SUPPORT', 0, 1, 'C'); // Mengubah tinggi menjadi 0
-        // $this->Cell(500, 4, 'BRANCH MANAGER', 0, 1, 'C'); // Mengubah tinggi menjadi 0
-        // $this->Ln(10); // Mengubah spasi 
-
-        // // Nama dan Jabatan
-        // $this->SetY(-40);
-        // $this->SetFont('Arial', 'U', 10);
-        // $this->Cell(500, 4, 'ALEXANDER DENALOVA', 0, 1, 'C');
-
-        // // Tanggal Timestamp
-        // $this->SetFont('Arial', '', 8);
-        // $this->Cell(500, 4, 'Tanggal: ' . date('d F Y H:i:s'), 0, 1, 'C'); // Menampilkan tanggal timestamp
-        // $this->SetY(-15);
-        // $this->SetFont('Arial', 'I', 8);
-        // $this->Cell(0, 10, 'Halaman ' . $this->PageNo(), 0, 0, 'C');
-        $this->Cell(0, 5, 'Tanggal        : ' . date('d F Y'), 0, 1, 'L');
-        $this->Cell(0, 5, 'Dicetak oleh : ' . $_SESSION['nama'], 0, 1, 'L');
-        $this->Ln(4); // Spasi
+        $this->SetY(-20);
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(0, 5, 'Dicetak oleh: ' . $_SESSION['nama'], 0, 1, 'L');
+        $this->Cell(0, 5, 'Tanggal cetak: ' . date('d F Y H:i:s'), 0, 0, 'L');
     }
 }
 
-// Create PDF instance
 $pdf = new PDF('P', 'mm', 'A4');
 $pdf->AddPage();
-$sql = 'select 
-id_reserv,
-    pegawai.Nama as Nama_Peminjam,
-    pegawai.id_nik as Nik,
-    pegawai.fk_devisi as Devisi,
-    pegawai.Jabatan as Jabatan,
-    Tujuan,
-    Pilih_Reserv,
-    mobil.plat_nomer as plat_nomer,
-    mobil.Merek as merek,
-    mobil.tipe_mobil as tipe_mobil,
-    mobil.Warna as warna,
-DATE_FORMAT(WaktuOut,"%d-%m-%y %H:%i") as WaktuOut,
-DATE_FORMAT(WaktuIn,"%d-%m-%y %H:%i") as WaktuIn,
-KmOut,
-fotoout,
-KmIn, 
-fotoin,
-status
-from reserv 
-join pegawai on id_nik=reserv.Nik 
-join mobil on reserv.Plat_nomer=mobil.plat_nomer
-where id_reserv=' . $_GET['id_reserv'];
+
+// Ambil data dari database
+$id_reserv = $_GET['id_reserv'];
+$sql = "SELECT 
+    reserv.id_reserv,
+    pegawai.Nama AS Nama_Peminjam,
+    pegawai.id_nik AS Nik,
+    pegawai.fk_devisi AS Devisi,
+    pegawai.Jabatan AS Jabatan,
+    reserv.Tujuan,
+    reserv.Pilih_Reserv,
+    mobil.plat_nomer AS plat_nomer,
+    mobil.Merek AS merek,
+    mobil.tipe_mobil AS tipe_mobil,
+    mobil.Warna AS warna,
+    DATE_FORMAT(reserv.WaktuOut,'%d-%m-%Y %H:%i') AS WaktuOut,
+    DATE_FORMAT(reserv.WaktuIn,'%d-%m-%Y %H:%i') AS WaktuIn,
+    reserv.KmOut,
+    reserv.fotoout,
+    reserv.KmIn, 
+    reserv.fotoin
+    FROM reserv
+    JOIN pegawai ON reserv.Nik = pegawai.id_nik
+    JOIN mobil ON reserv.Plat_nomer = mobil.plat_nomer
+    WHERE id_reserv = '$id_reserv'";
+    
 $result = $koneksi->query($sql)->fetch_assoc();
-// Add content to the PDF
+
 $pdf->SetFont('Arial', '', 10);
-$pdf->Cell(155, 10, 'Nama            :  ' . $result['Nama_Peminjam'], 0, 1, '');
-$pdf->Cell(155, 10, 'Nik                :  ' . $result['Nik'], 0, 1, '');
-$pdf->Cell(155, 10, 'Devisi           :  ' . $result['Devisi'], 0, 1, '');
-$pdf->Cell(155, 10, 'Jabatan         :  ' . $result['Jabatan'], 0, 1, '');
-$pdf->Cell(155, 10, 'Tujuan           :  ' . $result['Tujuan'], 0, 1, '');
-$pdf->Cell(155, 10, 'NO.Plat         :  ' . $result['plat_nomer'], 0, 1, '');
-$pdf->Cell(155, 10, 'Merek            :  ' . $result['merek'], 0, 1, '');
-$pdf->Cell(155, 10, 'Tipe               :  ' . $result['tipe_mobil'], 0, 1, '');
-$pdf->Cell(155, 10, 'Warna            :  ' . $result['warna'], 0, 1, '');
-$pdf->Cell(155, 10, 'Waktu Keluar  :  ' . $result['WaktuOut'], 0, 1, '');
-$pdf->Cell(155, 10, 'Waktu Masuk  :  ' . $result['WaktuIn'], 0, 1, '');
-$pdf->Cell(155, 10, 'KM keluar        :  ' . $result['KmOut'], 0, 1, '');
-$pdf->Cell(155, 10, 'KM masuk        :  ' . $result['KmIn'], 0, 1, '');
-// $pdf->Cell(155, 10, 'status          :  ' . $result['status'], 0, 1, '');
-$pdf->SetY(-40);
-$pdf->Cell(0, 5, 'Tanggal        : ' . date('d F Y'), 0, 1, 'L');
-$pdf->Cell(0, 5, 'Dicetak oleh : ' . $_SESSION['nama'], 0, 1, 'L');
-$pdf->SetY(-80);
-$pdf->SetFont('Arial', 'B', 10);
-$pdf->Cell(320, 4, 'Banjarmasin, ' . date('d F Y'), 0, 1, 'C');
-$pdf->Cell(320, 4, 'PT. ANGKASA PURA SUPPORT', 0, 1, 'C'); // Mengubah tinggi menjadi 0
-$pdf->Cell(320, 4, 'BRANCH MANAJER', 0, 1, 'C'); // Mengubah tinggi menjadi 0
-$pdf->Ln(10); // Mengubah spasi 
 
-// Nama dan Jabatan
-$pdf->SetY(-40);
+// Informasi peminjam
+$fields = [
+    'Nama' => $result['Nama_Peminjam'],
+    'NIK' => $result['Nik'],
+    'Devisi' => $result['Devisi'],
+    'Jabatan' => $result['Jabatan'],
+    'Tujuan' => $result['Tujuan'],
+    'No. Plat' => $result['plat_nomer'],
+    'Merek' => $result['merek'],
+    'Tipe Mobil' => $result['tipe_mobil'],
+    'Warna' => $result['warna'],
+    'Waktu Keluar' => $result['WaktuOut'],
+    'Waktu Masuk' => $result['WaktuIn'],
+    'KM Keluar' => $result['KmOut'],
+    'KM Masuk' => $result['KmIn']
+];
+
+foreach ($fields as $label => $value) {
+    $pdf->Cell(50, 7, $label, 0, 0);
+    $pdf->Cell(5, 7, ':', 0, 0);
+    $pdf->Cell(120, 7, $value, 0, 1);
+}
+
+$pdf->Ln(10);
+$pdf->MultiCell(0, 7, 'Dengan ini menyatakan bahwa yang bersangkutan melakukan peminjaman kendaraan operasional di luar jam kerja perusahaan, dengan tujuan dan informasi di atas. Surat ini dibuat sebagai bukti resmi peminjaman kendaraan dan wajib diserahkan kepada pihak berwenang saat diperlukan.');
+
+$pdf->Ln(15);
+
+// Tanda tangan
+$tanggal = date('d F Y');
+$pdf->Cell(120); $pdf->Cell(60, 7, 'Banjarmasin, ' . $tanggal, 0, 1, 'C');
+$pdf->Cell(120); $pdf->Cell(60, 7, 'PT. ANGKASA PURA SUPPORT', 0, 1, 'C');
+$pdf->Cell(120); $pdf->Cell(60, 7, 'BRANCH MANAGER', 0, 1, 'C');
+$pdf->Ln(20);
 $pdf->SetFont('Arial', 'U', 10);
-$pdf->Cell(320, 4, 'ALEXANDER DENALOVA', 0, 1, 'C');
+$pdf->Cell(120); $pdf->Cell(60, 7, 'ALEXANDER DENALOVA', 0, 1, 'C');
 
-// Tanggal Timestamp
-$pdf->SetFont('Arial', '', 8);
-$pdf->Cell(320, 4, 'Tanggal: ' . date('d F Y H:i:s'), 0, 1, 'C'); // Menampilkan tanggal timestamp
-
-
-// Output the PDF
 $pdf->Output();

@@ -56,10 +56,10 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                             <input type="text" class="form-control" id="" aria-describedby="" name="warna" required>
                         </div>
                         <div class="mb-3">
-                            <label for="" class="form-label">Konsumsi BBM Perminggu</label>
-                            <input type="text" class="form-control" id="" aria-describedby="" name="BBM" required>
+                            <label for="" class="form-label">Konsumsi BBM</label>
+                            <input type="text" class="form-control" id="" aria-describedby="" placeholder="KM/Liter" name="BBM" required>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3"> 
                             <label for="" class="form-label">Nomer Mesin</label>
                             <input type="text" class="form-control" id="" aria-describedby="" name="noMesin" required>
                         </div>

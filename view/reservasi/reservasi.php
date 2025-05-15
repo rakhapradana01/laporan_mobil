@@ -100,15 +100,21 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                 cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>AKSI</th>
+                                        <?php
+                                        if ($_SESSION['fk_role'] == 'admin') {
+                                            echo '<th width="80px;">Aksi</th>';
+                                        } else {
+                                            echo '';
+                                        }
+                                        ?>
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>Nik</th>
                                         <th>Devisi</th>
                                         <th>Jabatan</th>
                                         <th>Tujuan</th>
-                                        <th>Pilih_Reser</th>
-                                        <th>Plat_Nomer</th>
+                                        <th>Pilih Reser</th>
+                                        <th>Plat Nomer</th>
                                         <th>Merek</th>
                                         <th>Tipe</th>
                                         <th>Warna</th>
@@ -148,28 +154,35 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
 
                                         ?>
                                         <tr>
-                                            <td><a href="<?= BASE_URL ?>/view/reservasi/proses_update_status.php?id_reserv=<?= $d["id_reserv"] ?>"
-                                                    onclick="return confirm('Apakah Anda yakin ingin mengubah status menjadi ACC?')">
-                                                    <button class="btn btn-success">
-                                                        <i class="fas fa-fw fa-check"></i>
-                                                    </button>
-                                                </a>
+                                            <?php
+                                            // Ensure the user is an admin before showing action buttons
+                                            if ($_SESSION['fk_role'] == 'admin') {
+                                            //     // For updating the status
+                                                echo '<td><a href="' . BASE_URL . '/view/reservasi/proses_update_status.php?id_reserv=' . $d["id_reserv"] . '"
+                                                        onclick="return confirm(\'Apakah Anda yakin ingin mengubah status menjadi ACC?\')">
+                                                        <button class="btn btn-success btn-sm">
+                                                            <i class="fas fa-fw fa-check"></i>
+                                                        </button>
+                                                    </a>';
+                                        
+                                            //     // // Download button
+                                            //     // echo '<hr><a target="_blank" href="' . BASE_URL . '/print/buktiReservasi.php?id_reserv=' . $d["id_reserv"] . '">
+                                            //     //     <button class="btn btn-dark">
+                                            //     //         <i class="fas fa-fw fa-download"></i>
+                                            //     //     </button>
+                                            //     // </a>';
+                                        
+                                            //     // For deleting the reservation
+                                                echo '<a href="' . BASE_URL . '/process/delete/process_hapusReserv.php?id_reserv=' . $d["id_reserv"] . '" 
+                                                        data-id="' . $d["id_reserv"] . '" data-toggle="modal" data-target="#exampleModal" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-fw fa-trash"></i>
+                                                    </a></td>';
+                                            } else {
 
-                                                <hr>
-                                                <a target="_blank"
-                                                    href="<?= BASE_URL ?>/print/buktiReservasi.php?id_reserv=<?= $d["id_reserv"] ?>"><button
-                                                        class="btn btn-dark"><i
-                                                            class="fas fa-fw fa-download"></i></button></a>
-                                                <hr>
-                                                <?php
-                                                if ($_SESSION['fk_role'] == 'admin') {
-                                                    echo '
-                                        <a href="' . BASE_URL . '/process/delete/process_hapusReserv.php?id_reserv=' . $d["id_reserv"] . '" data-id="' . $d["id_reserv"] . '" data-toggle="modal" data-target="#exampleModal" class="btn btn-danger"><i class="fas fa-fw fa-trash"></i></a></td>';
-                                                } else {
-                                                    echo '';
-                                                }
-                                                ?>
-                                            </td>
+                                                echo '';
+                                            }
+                                            ?>
+
                                             <td><?= $no++; ?></td>
                                             <td><?= $d['Nama_Peminjam']; ?></td>
                                             <td><?= $d['Nik']; ?></td>
@@ -181,9 +194,49 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                             <td><?= $d['Merek']; ?></td>
                                             <td><?= $d['Tipe_Mobil']; ?></td>
                                             <td><?= $d['warna']; ?></td>
-                                            <td><?= isset($d['WaktuOut']) ? date('d-m-Y H:i:s', strtotime($d['WaktuOut'])) : "-"; ?>
+
                                             </td>
-                                            <td><?= isset($d['WaktuIn']) ? date('d-m-Y H:i:s', strtotime($d['WaktuIn'])) : "-"; ?>
+                                            <td style="white-space: normal;">
+                                                <?php
+                                                if ($d['WaktuOut']) {
+                                                    // Mengambil WaktuOut
+                                                    $waktu_out = $d['WaktuOut'];
+
+                                                    // Mengonversi WaktuOut menjadi format Hari-Bulan-Tahun
+                                                    $formatted_date = date("d-m-Y", strtotime($waktu_out));
+
+                                                    // Jika ada waktu (jam), tampilkan juga
+                                                    $date_time = explode(" ", $waktu_out);
+                                                    $date = $date_time[0]; // Tanggal
+                                                    $time = isset($date_time[1]) ? $date_time[1] : '';
+
+                                                    // Tampilkan Tanggal dalam format Hari-Bulan-Tahun
+                                                    echo "<span style='display:block;'>$formatted_date</span><span>$time</span>";
+                                                } else {
+                                                    echo "-"; // Jika tidak ada data WaktuOut
+                                                }
+                                                ?>
+                                            </td>
+                                            <td style="white-space: normal;">
+                                                <?php
+                                                if ($d['WaktuIn']) {
+                                                    // Mengambil WaktuOut
+                                                    $waktu_in = $d['WaktuIn'];
+
+                                                    // Mengonversi WaktuOut menjadi format Hari-Bulan-Tahun
+                                                    $formatted_date = date("d-m-Y", strtotime($waktu_in));
+
+                                                    // Jika ada waktu (jam), tampilkan juga
+                                                    $date_time = explode(" ", $waktu_in);
+                                                    $date = $date_time[0]; // Tanggal
+                                                    $time = isset($date_time[1]) ? $date_time[1] : '';
+
+                                                    // Tampilkan Tanggal dalam format Hari-Bulan-Tahun
+                                                    echo "<span style='display:block;'>$formatted_date</span><span>$time</span>";
+                                                } else {
+                                                    echo "-"; // Jika tidak ada data WaktuOut
+                                                }
+                                                ?>
                                             </td>
                                             <td><?= $d['status']; ?></td>
                                         </tr>
@@ -262,5 +315,9 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
         max-height: 700px;
         /* Adjust the maximum height as needed */
         overflow-y: auto;
+    }
+
+    table {
+        white-space: nowrap;
     }
 </style>

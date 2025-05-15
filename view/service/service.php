@@ -24,17 +24,18 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
     <?php
     include '../../template/sidebar.php';
     include '../../template/topbar.php';
-    if (isset($_SESSION['tambah']) == 'berhasil tambah') {
-       echo "
-         <script type='text/javascript'>
-                swal({
-                    title: 'Informasi',
-                    text: 'Data Berhasil Ditambahkan',
-                    icon: 'success',
-                    button: 'OK',
-                });
-         </script>";
-    } 
+    if (isset($_GET['notification'])) {
+        $notification = $_GET['notification'];
+        echo "
+        <script type='text/javascript'>
+            swal({
+                title: 'Informasi Service',
+                text: '$notification',
+                icon: 'info',
+                button: 'OK',
+            });
+        </script>";
+    }
 
     if (isset($_SESSION['edit']) == 'berhasil edit') {
        echo "
@@ -100,12 +101,14 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                 <th>tipe</th>
                                 <th>Warna</th>
                                 <th>Jenis service</th>
+                                <th>KM Service Sekarang</th>
+                                <th>KM Service Berikutnya</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             $no = 1;
-                            $data = mysqli_query($koneksi, "select * from service join mobil on mobil.plat_nomer=service.plat_nomer");
+                            $data = mysqli_query($koneksi, "SELECT * FROM service JOIN mobil ON mobil.plat_nomer=service.plat_nomer ORDER BY service.id DESC");
                             while ($d = mysqli_fetch_array($data)) {
                             ?>
                                 <tr>
@@ -125,7 +128,8 @@ $page = isset($_GET['page']) ? ($_GET['page']) : false;
                                     <td><?= $d['tipe_mobil']; ?></td>
                                     <td><?= $d['warna']; ?></td>
                                     <td><?= $d['jenis_service']; ?></td>
-
+                                    <td><?= $d['km_sekarang'];?></td>
+                                    <td><?= $d['km_berikutnya'];?></td>
                                 </tr>
                             <?php
                             };
